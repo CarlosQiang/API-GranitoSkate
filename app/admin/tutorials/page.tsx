@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Plus, Pencil, Trash2, AlertCircle } from "lucide-react"
+import { Plus, Pencil, Trash2, AlertCircle, RefreshCw } from "lucide-react"
 
 export default function TutorialsPage() {
   const [tutorials, setTutorials] = useState([])
@@ -10,45 +10,45 @@ export default function TutorialsPage() {
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
 
-  useEffect(() => {
-    const fetchTutorials = async () => {
-      try {
-        setLoading(true)
-        setError(null)
+  const fetchTutorials = async () => {
+    try {
+      setLoading(true)
+      setError(null)
 
-        // Añadimos un timestamp para evitar caché
-        const timestamp = new Date().getTime()
-        console.log("Fetching tutorials with timestamp:", timestamp)
-        const response = await fetch(`/api/admin/tutorials?t=${timestamp}`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        })
+      // Añadimos un timestamp para evitar caché
+      const timestamp = new Date().getTime()
+      console.log("Fetching tutorials with timestamp:", timestamp)
+      const response = await fetch(`/api/admin/tutorials?t=${timestamp}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+      })
 
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error("Error en respuesta:", response.status, errorText)
-          throw new Error(`Error ${response.status}: ${response.statusText}`)
-        }
-
-        const data = await response.json()
-        console.log("Datos recibidos:", data)
-
-        if (Array.isArray(data)) {
-          setTutorials(data)
-        } else {
-          console.error("Formato de datos incorrecto:", data)
-          setTutorials([])
-        }
-      } catch (err) {
-        console.error("Error al cargar tutoriales:", err)
-        setError(err.message || "Error al cargar los datos")
-      } finally {
-        setLoading(false)
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Error en respuesta:", response.status, errorText)
+        throw new Error(`Error ${response.status}: ${response.statusText}`)
       }
-    }
 
+      const data = await response.json()
+      console.log("Datos recibidos:", data)
+
+      if (Array.isArray(data)) {
+        setTutorials(data)
+      } else {
+        console.error("Formato de datos incorrecto:", data)
+        setTutorials([])
+      }
+    } catch (err) {
+      console.error("Error al cargar tutoriales:", err)
+      setError(err.message || "Error al cargar los datos")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchTutorials()
   }, [])
 
@@ -79,17 +79,47 @@ export default function TutorialsPage() {
       tutorial.nivel?.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  const initializeDatabase = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch("/api/init-db/tutorials")
+      if (!response.ok) {
+        throw new Error("Error al inicializar la base de datos")
+      }
+
+      const result = await response.json()
+      console.log("Resultado de inicialización:", result)
+
+      // Recargar los tutoriales
+      await fetchTutorials()
+    } catch (err) {
+      console.error("Error:", err)
+      setError(err.message || "Error al inicializar la base de datos")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Tutoriales</h1>
-        <Link
-          href="/admin/tutorials/new"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md flex items-center"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Nuevo Tutorial
-        </Link>
+        <div className="flex space-x-2">
+          <button
+            onClick={initializeDatabase}
+            className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md flex items-center"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Inicializar DB
+          </button>
+          <Link
+            href="/admin/tutorials/new"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md flex items-center"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Nuevo Tutorial
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">

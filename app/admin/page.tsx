@@ -17,6 +17,22 @@ import {
   AlertTriangle,
 } from "lucide-react"
 
+// Mock functions for Shopify data (replace with actual implementation)
+// async function getShopifyProducts() {
+//   // Replace with your actual Shopify product fetching logic
+//   return [];
+// }
+
+// async function getShopifyOrders() {
+//   // Replace with your actual Shopify order fetching logic
+//   return [];
+// }
+
+// async function getCustomers() {
+//   // Replace with your actual Shopify customer fetching logic
+//   return [];
+// }
+
 async function getStats() {
   try {
     // Verificar si las tablas existen antes de hacer las consultas
@@ -29,11 +45,27 @@ async function getStats() {
       }
     }
 
-    // Obtener estadísticas de todas las tablas
+    // Obtener estadísticas de Shopify para productos, pedidos y clientes
+    let productsCount = 0
+    let ordersCount = 0
+    let customersCount = 0
+
+    try {
+      // Intentar obtener datos de Shopify
+      const shopifyProducts = await getShopifyProducts()
+      productsCount = shopifyProducts?.length || 0
+
+      const shopifyOrders = await getShopifyOrders()
+      ordersCount = shopifyOrders?.length || 0
+
+      const customers = await getCustomers()
+      customersCount = customers?.length || 0
+    } catch (error) {
+      console.error("Error al obtener datos de Shopify:", error)
+    }
+
+    // Obtener estadísticas de las tablas locales
     const stats = await Promise.allSettled([
-      sql`SELECT COUNT(*) FROM products`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
-      sql`SELECT COUNT(*) FROM orders`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
-      sql`SELECT COUNT(*) FROM customers`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
       sql`SELECT COUNT(*) FROM messages`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
       sql`SELECT COUNT(*) FROM banners`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
       sql`SELECT COUNT(*) FROM resenas`.then((res) => Number(res[0]?.count || 0)).catch(() => 0),
@@ -48,18 +80,18 @@ async function getStats() {
     return {
       error: null,
       counts: {
-        productsCount: getSettledValue(stats[0], 0),
-        ordersCount: getSettledValue(stats[1], 0),
-        customersCount: getSettledValue(stats[2], 0),
-        messagesCount: getSettledValue(stats[3], 0),
-        bannersCount: getSettledValue(stats[4], 0),
-        reviewsCount: getSettledValue(stats[5], 0),
-        faqCount: getSettledValue(stats[6], 0),
-        homeBlocksCount: getSettledValue(stats[7], 0),
-        skatersCount: getSettledValue(stats[8], 0),
-        spotsCount: getSettledValue(stats[9], 0),
-        tutorialsCount: getSettledValue(stats[10], 0),
-        eventsCount: getSettledValue(stats[11], 0),
+        productsCount: productsCount,
+        ordersCount: ordersCount,
+        customersCount: customersCount,
+        messagesCount: getSettledValue(stats[0], 0),
+        bannersCount: getSettledValue(stats[1], 0),
+        reviewsCount: getSettledValue(stats[2], 0),
+        faqCount: getSettledValue(stats[3], 0),
+        homeBlocksCount: getSettledValue(stats[4], 0),
+        skatersCount: getSettledValue(stats[5], 0),
+        spotsCount: getSettledValue(stats[6], 0),
+        tutorialsCount: getSettledValue(stats[7], 0),
+        eventsCount: getSettledValue(stats[8], 0),
       },
     }
   } catch (error) {
@@ -85,6 +117,72 @@ async function checkTablesExist() {
   } catch (error) {
     // Si hay un error, probablemente la tabla no existe
     return false
+  }
+}
+
+// Función para obtener productos de Shopify
+async function getShopifyProducts() {
+  try {
+    const response = await fetch("/api/admin/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener productos: ${response.statusText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error al obtener productos:", error)
+    return []
+  }
+}
+
+// Función para obtener pedidos de Shopify
+async function getShopifyOrders() {
+  try {
+    const response = await fetch("/api/admin/orders", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener pedidos: ${response.statusText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error al obtener pedidos:", error)
+    return []
+  }
+}
+
+// Función para obtener clientes
+async function getCustomers() {
+  try {
+    const response = await fetch("/api/admin/customers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      throw new Error(`Error al obtener clientes: ${response.statusText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error al obtener clientes:", error)
+    return []
   }
 }
 
