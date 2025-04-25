@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "API GranitoSkate - TFG",
   description: "API para conectar bases de datos con Shopify",
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
   },
     generator: 'v0.dev'
 }

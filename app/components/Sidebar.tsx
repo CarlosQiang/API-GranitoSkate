@@ -27,6 +27,11 @@ import {
   X,
 } from "lucide-react"
 
+// Color de la marca
+const brandColor = "text-brand-400"
+const brandBgActive = "bg-brand-50"
+const brandBgHover = "hover:bg-brand-100"
+
 interface NavItemProps {
   href: string
   icon: React.ReactNode
@@ -42,11 +47,11 @@ function NavItem({ href, icon, text, isActive, hasSubmenu, isSubmenuOpen, onClic
     <Link
       href={href}
       className={`flex items-center px-4 py-3 text-sm ${
-        isActive ? "bg-primary-100 text-primary-900 font-medium" : "text-gray-700 hover:bg-gray-100"
+        isActive ? `${brandBgActive} ${brandColor} font-medium` : `text-gray-700 ${brandBgHover}`
       } rounded-md transition-colors`}
       onClick={onClick}
     >
-      <span className="mr-3">{icon}</span>
+      <span className={`mr-3 ${isActive ? brandColor : "text-gray-500"}`}>{icon}</span>
       <span>{text}</span>
       {hasSubmenu && (
         <span className="ml-auto">
@@ -112,7 +117,7 @@ export default function Sidebar() {
       <div className="md:hidden fixed top-4 right-4 z-50">
         <button
           onClick={toggleMobileMenu}
-          className="p-2 rounded-md bg-white shadow-md border border-gray-200 text-gray-700 hover:bg-gray-100"
+          className={`p-2 rounded-md bg-white shadow-md border border-gray-200 text-gray-700 ${brandBgHover}`}
           aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
         >
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
