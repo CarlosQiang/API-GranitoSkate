@@ -1,17 +1,28 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { Eye, EyeOff, LogIn } from "lucide-react"
 
 export default function AdminLogin() {
-  const [identifier, setIdentifier] = useState("")
-  const [password, setPassword] = useState("")
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError("")
@@ -22,7 +33,7 @@ export default function AdminLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ identifier, password }),
+        body: JSON.stringify(formData),
       })
 
       const data = await response.json()
@@ -31,16 +42,9 @@ export default function AdminLogin() {
         throw new Error(data.error || "Error al iniciar sesión")
       }
 
-      // Mostrar mensaje de éxito antes de redirigir
-      setError("")
-      console.log("Inicio de sesión exitoso, redirigiendo...")
-
-      // Redirigir al panel de administración después de un breve retraso
-      setTimeout(() => {
-        router.push("/admin")
-      }, 500)
-    } catch (err: any) {
-      console.error("Error de inicio de sesión:", err)
+      // Redirigir al panel de administración
+      router.push("/admin")
+    } catch (err) {
       setError(err.message || "Error al iniciar sesión")
     } finally {
       setLoading(false)
@@ -79,40 +83,64 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="identifier" className="block text-gray-700 mb-2">
-              Email o Usuario
+            <label htmlFor="email" className="block text-gray-700 mb-2">
+              Email o Nombre de Usuario
             </label>
             <input
               type="text"
-              id="identifier"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               required
-              placeholder="admin@granitoskate.com o admin"
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-6">
             <label htmlFor="password" className="block text-gray-700 mb-2">
               Contraseña
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                required
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <Eye className="h-5 w-5 text-gray-400" />
+                )}
+              </button>
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
+            className="w-full py-2 px-4 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center"
           >
-            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {loading ? (
+              <>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                Iniciando sesión...
+              </>
+            ) : (
+              <>
+                <LogIn className="mr-2 h-5 w-5" />
+                Iniciar Sesión
+              </>
+            )}
           </button>
         </form>
       </div>

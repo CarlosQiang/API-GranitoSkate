@@ -1,14 +1,9 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de skater requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const skater = await sql`SELECT * FROM skaters WHERE id = ${id}`
 
     if (skater.length === 0) {
@@ -23,15 +18,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de skater requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
     const { nombre, estilo, edad, ciudad, pais, biografia, logros, imagen_url } = body
+
+    if (!nombre || !estilo || !ciudad || !pais || !biografia || !imagen_url) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE skaters
@@ -54,13 +48,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de skater requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM skaters WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {

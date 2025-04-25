@@ -1,14 +1,9 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de evento requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const event = await sql`SELECT * FROM eventos WHERE id = ${id}`
 
     if (event.length === 0) {
@@ -23,21 +18,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de evento requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
-    const { titulo, descripcion, fecha_inicio, fecha_fin, ubicacion, imagen_url } = body
+    const { titulo, descripcion, fecha_inicio, fecha_fin } = body
+
+    if (!titulo || !descripcion || !fecha_inicio || !fecha_fin) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE eventos
       SET titulo = ${titulo}, descripcion = ${descripcion}, 
-          fecha_inicio = ${fecha_inicio}, fecha_fin = ${fecha_fin},
-          ubicacion = ${ubicacion}, imagen_url = ${imagen_url}
+          fecha_inicio = ${fecha_inicio}, fecha_fin = ${fecha_fin}
       WHERE id = ${id}
       RETURNING *
     `
@@ -54,13 +47,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de evento requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM eventos WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {

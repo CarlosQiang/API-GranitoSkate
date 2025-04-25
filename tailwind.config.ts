@@ -22,17 +22,17 @@ const config: Config = {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "#d29a43", // Color dorado principal actualizado
-          50: "#fdf8ed",
-          100: "#f9ecd2",
-          200: "#f2d9a6",
-          300: "#eac279",
-          400: "#d29a43", // Base
-          500: "#c38937",
-          600: "#a6702d",
-          700: "#855627",
-          800: "#6f4525",
-          900: "#5f3a23",
+          DEFAULT: "#c39c47", // Color dorado principal
+          50: "#faf6e9",
+          100: "#f5ecd3",
+          200: "#ebdaa8",
+          300: "#e0c87d",
+          400: "#d6b652",
+          500: "#c39c47", // Base
+          600: "#b38a3f",
+          700: "#a37937",
+          800: "#93682f",
+          900: "#835727",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -54,34 +54,21 @@ const config: Config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {
-          "1": "#d29a43", // Usar el color dorado como principal
-          "2": "#c38937",
-          "3": "#a6702d",
-          "4": "#eac279",
-          "5": "#f2d9a6",
+          "1": "#c39c47", // Usar el color dorado como principal
+          "2": "#a37937",
+          "3": "#93682f",
+          "4": "#d6b652",
+          "5": "#ebdaa8",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
-          primary: "#d29a43", // Color dorado para la barra lateral
+          primary: "#c39c47", // Color dorado para la barra lateral
           "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
           accent: "hsl(var(--sidebar-accent))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
-        },
-        brand: {
-          DEFAULT: "#d29a43",
-          50: "#fdf8ed",
-          100: "#f9ecd2",
-          200: "#f2d9a6",
-          300: "#eac279",
-          400: "#d29a43", // Base
-          500: "#c38937",
-          600: "#a6702d",
-          700: "#855627",
-          800: "#6f4525",
-          900: "#5f3a23",
         },
       },
       borderRadius: {

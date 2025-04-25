@@ -1,14 +1,9 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de spot requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const spot = await sql`SELECT * FROM spots WHERE id = ${id}`
 
     if (spot.length === 0) {
@@ -23,15 +18,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de spot requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
     const { nombre, tipo, ciudad, direccion, descripcion, mapa_iframe, imagen_url } = body
+
+    if (!nombre || !tipo || !ciudad || !direccion || !descripcion || !imagen_url) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE spots
@@ -54,13 +48,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de spot requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM spots WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {

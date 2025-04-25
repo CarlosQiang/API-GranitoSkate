@@ -1,18 +1,13 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de FAQ requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const faq = await sql`SELECT * FROM faq WHERE id = ${id}`
 
     if (faq.length === 0) {
-      return NextResponse.json({ error: "FAQ no encontrado" }, { status: 404 })
+      return NextResponse.json({ error: "FAQ no encontrada" }, { status: 404 })
     }
 
     return NextResponse.json(faq[0])
@@ -23,15 +18,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de FAQ requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
     const { pregunta, respuesta } = body
+
+    if (!pregunta || !respuesta) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE faq
@@ -41,7 +35,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     `
 
     if (result.length === 0) {
-      return NextResponse.json({ error: "FAQ no encontrado" }, { status: 404 })
+      return NextResponse.json({ error: "FAQ no encontrada" }, { status: 404 })
     }
 
     return NextResponse.json(result[0])
@@ -52,20 +46,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de FAQ requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM faq WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {
-      return NextResponse.json({ error: "FAQ no encontrado" }, { status: 404 })
+      return NextResponse.json({ error: "FAQ no encontrada" }, { status: 404 })
     }
 
-    return NextResponse.json({ message: "FAQ eliminado correctamente" })
+    return NextResponse.json({ message: "FAQ eliminada correctamente" })
   } catch (error) {
     console.error("Error al eliminar FAQ:", error)
     return NextResponse.json({ error: "Error al eliminar FAQ" }, { status: 500 })

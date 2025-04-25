@@ -1,14 +1,9 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de banner requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const banner = await sql`SELECT * FROM banners WHERE id = ${id}`
 
     if (banner.length === 0) {
@@ -23,19 +18,18 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de banner requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
-    const { titulo, subtitulo, imagen_url, enlace, orden } = body
+    const { titulo, imagen_url, enlace, orden } = body
+
+    if (!titulo || !imagen_url || !enlace) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE banners
-      SET titulo = ${titulo}, subtitulo = ${subtitulo}, imagen_url = ${imagen_url}, enlace = ${enlace}, orden = ${orden}
+      SET titulo = ${titulo}, imagen_url = ${imagen_url}, enlace = ${enlace}, orden = ${orden}
       WHERE id = ${id}
       RETURNING *
     `
@@ -52,13 +46,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de banner requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM banners WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {

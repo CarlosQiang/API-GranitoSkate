@@ -1,14 +1,9 @@
-import { NextResponse } from "next/server"
 import { sql } from "@/app/api/db"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de reseña requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const review = await sql`SELECT * FROM resenas WHERE id = ${id}`
 
     if (review.length === 0) {
@@ -23,20 +18,20 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de reseña requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const body = await request.json()
-    const { nombre_cliente, id_producto, valoracion, comentario, aprobada } = body
+    const { nombre_cliente, id_producto, valoracion, comentario, fecha_creacion } = body
+
+    if (!nombre_cliente || !id_producto || !valoracion || !comentario) {
+      return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 })
+    }
 
     const result = await sql`
       UPDATE resenas
       SET nombre_cliente = ${nombre_cliente}, id_producto = ${id_producto}, 
-          valoracion = ${valoracion}, comentario = ${comentario}, aprobada = ${aprobada}
+          valoracion = ${valoracion}, comentario = ${comentario}, 
+          fecha_creacion = ${fecha_creacion}
       WHERE id = ${id}
       RETURNING *
     `
@@ -53,13 +48,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = params.id
-
-  if (!id) {
-    return NextResponse.json({ error: "ID de reseña requerido" }, { status: 400 })
-  }
-
   try {
+    const id = params.id
     const result = await sql`DELETE FROM resenas WHERE id = ${id} RETURNING *`
 
     if (result.length === 0) {

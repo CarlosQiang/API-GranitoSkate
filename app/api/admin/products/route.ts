@@ -1,39 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { queryApp } from "../../db"
+import { sql } from "../../db"
 
-// Obtener todos los productos
 export async function GET(request: NextRequest) {
   try {
-    // Consultar productos desde Shopify
-    const shopifyProducts = await getShopifyProducts()
-
-    return NextResponse.json(shopifyProducts)
-  } catch (error) {
-    console.error("Error al obtener productos:", error)
-    return NextResponse.json({ error: "Error al obtener productos" }, { status: 500 })
-  }
-}
-
-// Crear un nuevo producto
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-
-    // Crear producto en Shopify
-    const newProduct = await createShopifyProduct(body)
-
-    return NextResponse.json(newProduct, { status: 201 })
-  } catch (error) {
-    console.error("Error al crear producto:", error)
-    return NextResponse.json({ error: "Error al crear producto" }, { status: 500 })
-  }
-}
-
-// Funciones auxiliares para interactuar con la API de Shopify
-async function getShopifyProducts() {
-  try {
-    // Obtener token de acceso de la base de datos
-    const tokenResult = await queryApp("SELECT access_token FROM shopify_tokens LIMIT 1")
+    const tokenResult = await sql`SELECT access_token FROM shopify_tokens LIMIT 1`
     const accessToken = tokenResult.rows[0]?.access_token
 
     if (!accessToken) {
@@ -54,52 +24,17 @@ async function getShopifyProducts() {
     }
 
     const data = await response.json()
-    return data.products
+    return NextResponse.json(data.products)
   } catch (error) {
-    console.error("Error al obtener productos de Shopify:", error)
-    // Devolver datos de ejemplo si hay un error
-    return [
-      {
-        id: "1",
-        title: "Tabla Element Skate",
-        body_html: "Tabla de skate profesional",
-        vendor: "Element",
-        product_type: "Tabla",
-        created_at: new Date().toISOString(),
-        handle: "tabla-element-skate",
-        variants: [{ price: "59.99", inventory_quantity: 10 }],
-        image: { src: "https://example.com/tabla1.jpg" },
-      },
-      {
-        id: "2",
-        title: "Ruedas Spitfire 52mm",
-        body_html: "Ruedas de alta calidad",
-        vendor: "Spitfire",
-        product_type: "Ruedas",
-        created_at: new Date().toISOString(),
-        handle: "ruedas-spitfire-52mm",
-        variants: [{ price: "29.99", inventory_quantity: 20 }],
-        image: { src: "https://example.com/ruedas1.jpg" },
-      },
-      {
-        id: "3",
-        title: "Ejes Independent",
-        body_html: "Ejes de alta resistencia",
-        vendor: "Independent",
-        product_type: "Ejes",
-        created_at: new Date().toISOString(),
-        handle: "ejes-independent",
-        variants: [{ price: "39.99", inventory_quantity: 15 }],
-        image: { src: "https://example.com/ejes1.jpg" },
-      },
-    ]
+    console.error("Error al obtener productos:", error)
+    return NextResponse.json({ error: "Error al obtener productos" }, { status: 500 })
   }
 }
 
-async function createShopifyProduct(productData: any) {
+export async function POST(request: NextRequest) {
   try {
-    // Obtener token de acceso de la base de datos
-    const tokenResult = await queryApp("SELECT access_token FROM shopify_tokens LIMIT 1")
+    const body = await request.json()
+    const tokenResult = await sql`SELECT access_token FROM shopify_tokens LIMIT 1`
     const accessToken = tokenResult.rows[0]?.access_token
 
     if (!accessToken) {
@@ -114,7 +49,7 @@ async function createShopifyProduct(productData: any) {
         "X-Shopify-Access-Token": accessToken,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ product: productData }),
+      body: JSON.stringify({ product: body }),
     })
 
     if (!response.ok) {
@@ -122,9 +57,9 @@ async function createShopifyProduct(productData: any) {
     }
 
     const data = await response.json()
-    return data.product
+    return NextResponse.json(data.product, { status: 201 })
   } catch (error) {
-    console.error("Error al crear producto en Shopify:", error)
-    throw error
+    console.error("Error al crear producto:", error)
+    return NextResponse.json({ error: "Error al crear producto" }, { status: 500 })
   }
 }

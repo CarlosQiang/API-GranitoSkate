@@ -12,9 +12,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "API GranitoSkate - TFG",
   description: "API para conectar bases de datos con Shopify",
-  icons: {
-    icon: [{ url: "/favicon.ico", sizes: "any" }],
-  },
     generator: 'v0.dev'
 }
 
@@ -27,9 +24,6 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body className={inter.className}>
         <SessionProvider session={session}>
           <Navbar />

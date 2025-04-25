@@ -1,406 +1,306 @@
+"use client"
+
 import type React from "react"
-import { sql } from "@/app/api/db"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import {
-  Package,
-  ShoppingCart,
+  ShoppingBag,
   Users,
   MessageSquare,
-  ImageIcon,
   Star,
-  Calendar,
   HelpCircle,
   Layout,
   Map,
-  User,
   BookOpen,
-  AlertTriangle,
+  Calendar,
+  User,
+  Database,
 } from "lucide-react"
 
-// Función para obtener estadísticas directamente de la base de datos
-async function getStats() {
-  try {
-    // Verificar si las tablas existen antes de hacer las consultas
-    const tablesExist = await checkTablesExist()
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    orders: 0,
+    customers: 0,
+    messages: 0,
+    reviews: 0,
+    faq: 0,
+    homeBlocks: 0,
+    spots: 0,
+    tutorials: 0,
+    events: 0,
+    skaters: 0,
+  })
 
-    if (!tablesExist) {
-      return {
-        error: "Las tablas necesarias no existen en la base de datos. Por favor, ejecuta el script de inicialización.",
-        counts: {},
+  const [dbStatus, setDbStatus] = useState<"loading" | "connected" | "error">("loading")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    // Verificar si el usuario está autenticado
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/admin/verify")
+        if (res.ok) {
+          setIsLoggedIn(true)
+          fetchStats()
+        } else {
+          setIsLoggedIn(false)
+          window.location.href = "/admin/login"
+        }
+      } catch (error) {
+        console.error("Error verificando autenticación:", error)
+        setIsLoggedIn(false)
+        window.location.href = "/admin/login"
       }
     }
 
-    // Obtener datos de ejemplo para productos, pedidos y clientes
-    // Estos datos son los mismos que se devuelven en las rutas API cuando hay un error
-    const productsData = await getExampleProducts()
-    const ordersData = await getExampleOrders()
-    const customersData = await getExampleCustomers()
-    const messagesData = await getExampleMessages()
+    checkAuth()
+  }, [])
 
-    // Consultas directas a la base de datos para obtener conteos de otras tablas
-    const bannersResult = await sql`SELECT COUNT(*) as count FROM banners`.catch(() => [{ count: 0 }])
-    const resenasResult = await sql`SELECT COUNT(*) as count FROM resenas`.catch(() => [{ count: 0 }])
-    const faqResult = await sql`SELECT COUNT(*) as count FROM faq`.catch(() => [{ count: 0 }])
-    const homeBlocksResult = await sql`SELECT COUNT(*) as count FROM home_blocks`.catch(() => [{ count: 0 }])
-    const skatersResult = await sql`SELECT COUNT(*) as count FROM skaters`.catch(() => [{ count: 0 }])
-    const spotsResult = await sql`SELECT COUNT(*) as count FROM spots`.catch(() => [{ count: 0 }])
-    const tutorialesResult = await sql`SELECT COUNT(*) as count FROM tutoriales`.catch(() => [{ count: 0 }])
-    const eventosResult = await sql`SELECT COUNT(*) as count FROM eventos`.catch(() => [{ count: 0 }])
+  const fetchStats = async () => {
+    try {
+      // Verificar conexión a la base de datos
+      const dbCheck = await fetch("/api/db-check")
+      if (dbCheck.ok) {
+        setDbStatus("connected")
+      } else {
+        setDbStatus("error")
+        return
+      }
 
-    // Extraer los conteos de los resultados
-    const productsCount = productsData.length
-    const ordersCount = ordersData.length
-    const customersCount = customersData.length
-    const messagesCount = messagesData.length
-    const bannersCount = Number.parseInt(bannersResult[0]?.count || "0", 10)
-    const reviewsCount = Number.parseInt(resenasResult[0]?.count || "0", 10)
-    const faqCount = Number.parseInt(faqResult[0]?.count || "0", 10)
-    const homeBlocksCount = Number.parseInt(homeBlocksResult[0]?.count || "0", 10)
-    const skatersCount = Number.parseInt(skatersResult[0]?.count || "0", 10)
-    const spotsCount = Number.parseInt(spotsResult[0]?.count || "0", 10)
-    const tutorialsCount = Number.parseInt(tutorialesResult[0]?.count || "0", 10)
-    const eventsCount = Number.parseInt(eventosResult[0]?.count || "0", 10)
+      // Obtener estadísticas
+      const [
+        ordersRes,
+        customersRes,
+        messagesRes,
+        reviewsRes,
+        faqRes,
+        homeBlocksRes,
+        spotsRes,
+        tutorialsRes,
+        eventsRes,
+        skatersRes,
+      ] = await Promise.all([
+        fetch("/api/admin/orders"),
+        fetch("/api/admin/customers"),
+        fetch("/api/admin/messages"),
+        fetch("/api/admin/reviews"),
+        fetch("/api/admin/faq"),
+        fetch("/api/admin/home-blocks"),
+        fetch("/api/admin/spots"),
+        fetch("/api/admin/tutorials"),
+        fetch("/api/admin/events"),
+        fetch("/api/admin/skaters"),
+      ])
 
-    console.log("Conteos obtenidos:", {
-      productsCount,
-      ordersCount,
-      customersCount,
-      messagesCount,
-      bannersCount,
-      reviewsCount,
-      faqCount,
-      homeBlocksCount,
-      skatersCount,
-      spotsCount,
-      tutorialsCount,
-      eventsCount,
-    })
+      const [orders, customers, messages, reviews, faq, homeBlocks, spots, tutorials, events, skaters] =
+        await Promise.all([
+          ordersRes.json(),
+          customersRes.json(),
+          messagesRes.json(),
+          reviewsRes.json(),
+          faqRes.json(),
+          homeBlocksRes.json(),
+          spotsRes.json(),
+          tutorialsRes.json(),
+          eventsRes.json(),
+          skatersRes.json(),
+        ])
 
-    return {
-      error: null,
-      counts: {
-        productsCount,
-        ordersCount,
-        customersCount,
-        messagesCount,
-        bannersCount,
-        reviewsCount,
-        faqCount,
-        homeBlocksCount,
-        skatersCount,
-        spotsCount,
-        tutorialsCount,
-        eventsCount,
-      },
-    }
-  } catch (error) {
-    console.error("Error al obtener estadísticas:", error)
-    return {
-      error: "Error al conectar con la base de datos. Verifica la configuración de conexión.",
-      counts: {},
+      setStats({
+        orders: orders.length || 0,
+        customers: customers.length || 0,
+        messages: messages.length || 0,
+        reviews: reviews.length || 0,
+        faq: faq.length || 0,
+        homeBlocks: homeBlocks.length || 0,
+        spots: spots.length || 0,
+        tutorials: tutorials.length || 0,
+        events: events.length || 0,
+        skaters: skaters.length || 0,
+      })
+    } catch (error) {
+      console.error("Error obteniendo estadísticas:", error)
+      setDbStatus("error")
     }
   }
-}
 
-// Función para obtener productos de ejemplo
-async function getExampleProducts() {
-  return [
-    {
-      id: "1",
-      title: "Tabla Element Skate",
-      body_html: "Tabla de skate profesional",
-      vendor: "Element",
-      product_type: "Tabla",
-      created_at: new Date().toISOString(),
-      handle: "tabla-element-skate",
-      variants: [{ price: "59.99", inventory_quantity: 10 }],
-      image: { src: "https://example.com/tabla1.jpg" },
-    },
-    {
-      id: "2",
-      title: "Ruedas Spitfire 52mm",
-      body_html: "Ruedas de alta calidad",
-      vendor: "Spitfire",
-      product_type: "Ruedas",
-      created_at: new Date().toISOString(),
-      handle: "ruedas-spitfire-52mm",
-      variants: [{ price: "29.99", inventory_quantity: 20 }],
-      image: { src: "https://example.com/ruedas1.jpg" },
-    },
-    {
-      id: "3",
-      title: "Ejes Independent",
-      body_html: "Ejes de alta resistencia",
-      vendor: "Independent",
-      product_type: "Ejes",
-      created_at: new Date().toISOString(),
-      handle: "ejes-independent",
-      variants: [{ price: "39.99", inventory_quantity: 15 }],
-      image: { src: "https://example.com/ejes1.jpg" },
-    },
-  ]
-}
-
-// Función para obtener pedidos de ejemplo
-async function getExampleOrders() {
-  return [
-    {
-      id: "1001",
-      order_number: 1001,
-      customer: { first_name: "Juan", last_name: "Pérez", email: "juan@example.com" },
-      created_at: new Date().toISOString(),
-      total_price: "89.98",
-      financial_status: "paid",
-      fulfillment_status: "fulfilled",
-      line_items: [
-        { title: "Tabla Element Skate", quantity: 1, price: "59.99" },
-        { title: "Ruedas Spitfire 52mm", quantity: 1, price: "29.99" },
-      ],
-    },
-    {
-      id: "1002",
-      order_number: 1002,
-      customer: { first_name: "María", last_name: "García", email: "maria@example.com" },
-      created_at: new Date().toISOString(),
-      total_price: "39.99",
-      financial_status: "paid",
-      fulfillment_status: "unfulfilled",
-      line_items: [{ title: "Ejes Independent", quantity: 1, price: "39.99" }],
-    },
-    {
-      id: "1003",
-      order_number: 1003,
-      customer: { first_name: "Carlos", last_name: "López", email: "carlos@example.com" },
-      created_at: new Date().toISOString(),
-      total_price: "119.97",
-      financial_status: "pending",
-      fulfillment_status: null,
-      line_items: [
-        { title: "Tabla Element Skate", quantity: 1, price: "59.99" },
-        { title: "Ruedas Spitfire 52mm", quantity: 1, price: "29.99" },
-        { title: "Ejes Independent", quantity: 1, price: "39.99" },
-      ],
-    },
-  ]
-}
-
-// Función para obtener clientes de ejemplo
-async function getExampleCustomers() {
-  return [
-    {
-      id: "1",
-      shopify_customer_id: "1001",
-      email: "juan@example.com",
-      nombre: "Juan Pérez",
-      fecha_creacion: new Date().toISOString(),
-    },
-    {
-      id: "2",
-      shopify_customer_id: "1002",
-      email: "maria@example.com",
-      nombre: "María García",
-      fecha_creacion: new Date().toISOString(),
-    },
-    {
-      id: "3",
-      shopify_customer_id: "1003",
-      email: "carlos@example.com",
-      nombre: "Carlos López",
-      fecha_creacion: new Date().toISOString(),
-    },
-  ]
-}
-
-// Función para obtener mensajes de ejemplo
-async function getExampleMessages() {
-  return [
-    {
-      id: "1",
-      usuario_id: "1001",
-      asunto: "Consulta sobre producto",
-      mensaje: "Me gustaría saber si tienen disponible la tabla Element en color negro.",
-      fecha: new Date().toISOString(),
-      leido: false,
-    },
-    {
-      id: "2",
-      usuario_id: "1002",
-      asunto: "Problema con mi pedido",
-      mensaje: "No he recibido mi pedido y ya han pasado 5 días.",
-      fecha: new Date().toISOString(),
-      leido: true,
-    },
-    {
-      id: "3",
-      usuario_id: "1003",
-      asunto: "Devolución",
-      mensaje: "Quisiera devolver un producto que compré la semana pasada.",
-      fecha: new Date().toISOString(),
-      leido: false,
-    },
-    {
-      id: "4",
-      usuario_id: "1001",
-      asunto: "Agradecimiento",
-      mensaje: "Gracias por la rápida respuesta y solución a mi problema.",
-      fecha: new Date().toISOString(),
-      leido: true,
-    },
-  ]
-}
-
-// Verificar si las tablas necesarias existen
-async function checkTablesExist() {
-  try {
-    // Intentar consultar una tabla para ver si existe
-    await sql`SELECT 1 FROM banners LIMIT 1`
-    return true
-  } catch (error) {
-    // Si hay un error, probablemente la tabla no existe
-    return false
+  const initializeDatabase = async () => {
+    try {
+      setDbStatus("loading")
+      const res = await fetch("/api/init-db")
+      if (res.ok) {
+        setDbStatus("connected")
+        fetchStats()
+      } else {
+        setDbStatus("error")
+      }
+    } catch (error) {
+      console.error("Error inicializando base de datos:", error)
+      setDbStatus("error")
+    }
   }
-}
 
-// Color de la marca para usar en todo el dashboard
-const brandColor = "border-[#d29a43]"
+  if (!isLoggedIn) {
+    return null // No renderizar nada si no está autenticado
+  }
 
-interface StatCardProps {
-  title: string
-  count: number
-  icon: React.ReactNode
-  href: string
-}
-
-function StatCard({ title, count, icon, href }: StatCardProps) {
-  return (
-    <Link href={href} className="block">
-      <div className={`bg-white p-6 rounded-lg shadow-md border-l-4 ${brandColor} hover:shadow-lg transition-shadow`}>
-        <div className="flex items-center">
-          <div className="mr-4 text-[#d29a43]">{icon}</div>
+  const StatCard = ({
+    title,
+    value,
+    icon,
+    color,
+    href,
+  }: { title: string; value: number; icon: React.ReactNode; color: string; href: string }) => (
+    <Link href={href} className={`block w-full`}>
+      <div className={`rounded-lg p-6 shadow-md transition-all hover:shadow-lg ${color}`}>
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-            <p className="text-2xl font-bold">{count}</p>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+            <p className="text-3xl font-bold text-white">{value}</p>
           </div>
+          <div className="text-white opacity-80">{icon}</div>
         </div>
       </div>
     </Link>
   )
-}
-
-export default async function AdminDashboard() {
-  const { error, counts } = await getStats()
-
-  if (error) {
-    return (
-      <div className="min-h-screen p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
-
-        <div className="bg-[#f8f1e6] border-l-4 border-[#d29a43] p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <AlertTriangle className="h-5 w-5 text-[#d29a43]" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-[#8c6529]">{error}</p>
-              <div className="mt-4">
-                <div className="flex">
-                  <Link
-                    href="/api/init-db"
-                    className="bg-[#d29a43] hover:bg-[#b88438] text-white px-4 py-2 rounded-md text-sm font-medium"
-                  >
-                    Inicializar Base de Datos
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-gray-600 mb-4">
-          Para solucionar este problema, puedes ejecutar el script de inicialización de la base de datos desde la
-          terminal:
-        </p>
-
-        <div className="bg-gray-800 text-white p-4 rounded-md mb-6 overflow-x-auto">
-          <code>npm run init-db</code>
-        </div>
-
-        <p className="text-gray-600">
-          Este script creará todas las tablas necesarias y añadirá datos de ejemplo para que puedas empezar a trabajar
-          con la aplicación.
-        </p>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+    <div className="p-4 md:p-6">
+      <h1 className="mb-6 text-2xl font-bold md:text-3xl">Panel de Administración</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <StatCard
-          title="Productos"
-          count={counts.productsCount}
-          icon={<Package className="h-8 w-8" />}
-          href="/admin/products"
-        />
-        <StatCard
-          title="Pedidos"
-          count={counts.ordersCount}
-          icon={<ShoppingCart className="h-8 w-8" />}
-          href="/admin/orders"
-        />
-        <StatCard
-          title="Clientes"
-          count={counts.customersCount}
-          icon={<Users className="h-8 w-8" />}
-          href="/admin/customers"
-        />
-        <StatCard
-          title="Mensajes"
-          count={counts.messagesCount}
-          icon={<MessageSquare className="h-8 w-8" />}
-          href="/admin/messages"
-        />
-        <StatCard
-          title="Banners"
-          count={counts.bannersCount}
-          icon={<ImageIcon className="h-8 w-8" />}
-          href="/admin/banners"
-        />
-        <StatCard
-          title="Reseñas"
-          count={counts.reviewsCount}
-          icon={<Star className="h-8 w-8" />}
-          href="/admin/reviews"
-        />
-        <StatCard title="FAQ" count={counts.faqCount} icon={<HelpCircle className="h-8 w-8" />} href="/admin/faq" />
-        <StatCard
-          title="Bloques de Inicio"
-          count={counts.homeBlocksCount}
-          icon={<Layout className="h-8 w-8" />}
-          href="/admin/home-blocks"
-        />
-        <StatCard
-          title="Skaters"
-          count={counts.skatersCount}
-          icon={<User className="h-8 w-8" />}
-          href="/admin/skaters"
-        />
-        <StatCard title="Spots" count={counts.spotsCount} icon={<Map className="h-8 w-8" />} href="/admin/spots" />
-        <StatCard
-          title="Tutoriales"
-          count={counts.tutorialsCount}
-          icon={<BookOpen className="h-8 w-8" />}
-          href="/admin/tutorials"
-        />
-        <StatCard
-          title="Eventos"
-          count={counts.eventsCount}
-          icon={<Calendar className="h-8 w-8" />}
-          href="/admin/events"
-        />
-      </div>
+      {dbStatus === "error" && (
+        <div className="mb-6 rounded-lg bg-red-100 p-4 text-red-700">
+          <h2 className="mb-2 text-lg font-semibold">Error de conexión a la base de datos</h2>
+          <p className="mb-4">No se ha podido conectar con la base de datos o las tablas no existen.</p>
+          <button onClick={initializeDatabase} className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700">
+            Inicializar Base de Datos
+          </button>
+        </div>
+      )}
+
+      {dbStatus === "loading" && (
+        <div className="mb-6 flex items-center justify-center rounded-lg bg-blue-100 p-8 text-blue-700">
+          <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+          <span>Cargando...</span>
+        </div>
+      )}
+
+      {dbStatus === "connected" && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <StatCard
+            title="Pedidos"
+            value={stats.orders}
+            icon={<ShoppingBag size={32} />}
+            color="bg-green-600"
+            href="/admin/orders"
+          />
+          <StatCard
+            title="Clientes"
+            value={stats.customers}
+            icon={<Users size={32} />}
+            color="bg-purple-600"
+            href="/admin/customers"
+          />
+          <StatCard
+            title="Mensajes"
+            value={stats.messages}
+            icon={<MessageSquare size={32} />}
+            color="bg-yellow-600"
+            href="/admin/messages"
+          />
+          <StatCard
+            title="Reseñas"
+            value={stats.reviews}
+            icon={<Star size={32} />}
+            color="bg-orange-600"
+            href="/admin/reviews"
+          />
+          <StatCard
+            title="FAQ"
+            value={stats.faq}
+            icon={<HelpCircle size={32} />}
+            color="bg-blue-600"
+            href="/admin/faq"
+          />
+          <StatCard
+            title="Bloques de Inicio"
+            value={stats.homeBlocks}
+            icon={<Layout size={32} />}
+            color="bg-indigo-600"
+            href="/admin/home-blocks"
+          />
+          <StatCard
+            title="Spots"
+            value={stats.spots}
+            icon={<Map size={32} />}
+            color="bg-green-600"
+            href="/admin/spots"
+          />
+          <StatCard
+            title="Tutoriales"
+            value={stats.tutorials}
+            icon={<BookOpen size={32} />}
+            color="bg-red-600"
+            href="/admin/tutorials"
+          />
+          <StatCard
+            title="Eventos"
+            value={stats.events}
+            icon={<Calendar size={32} />}
+            color="bg-pink-600"
+            href="/admin/events"
+          />
+          <StatCard
+            title="Skaters"
+            value={stats.skaters}
+            icon={<User size={32} />}
+            color="bg-teal-600"
+            href="/admin/skaters"
+          />
+        </div>
+      )}
+
+      {dbStatus === "connected" && (
+        <div className="mt-8">
+          <h2 className="mb-4 text-xl font-semibold">Acciones rápidas</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <Link
+              href="/admin/products/new"
+              className="rounded-lg bg-blue-600 p-4 text-center text-white hover:bg-blue-700"
+            >
+              Añadir Producto
+            </Link>
+            <Link
+              href="/admin/events/new"
+              className="rounded-lg bg-green-600 p-4 text-center text-white hover:bg-green-700"
+            >
+              Crear Evento
+            </Link>
+            <Link
+              href="/admin/faq/new"
+              className="rounded-lg bg-purple-600 p-4 text-center text-white hover:bg-purple-700"
+            >
+              Añadir FAQ
+            </Link>
+            <Link
+              href="/admin/banners/new"
+              className="rounded-lg bg-orange-600 p-4 text-center text-white hover:bg-orange-700"
+            >
+              Crear Banner
+            </Link>
+            <button
+              onClick={initializeDatabase}
+              className="rounded-lg bg-gray-600 p-4 text-center text-white hover:bg-gray-700"
+            >
+              <div className="flex items-center justify-center">
+                <Database className="mr-2" size={20} />
+                <span>Reinicializar Base de Datos</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

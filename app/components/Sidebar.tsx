@@ -2,330 +2,261 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Home,
-  Package,
-  ShoppingCart,
+  ShoppingBag,
   Users,
   MessageSquare,
-  ImageIcon,
-  Star,
-  FileText,
+  Settings,
+  LogOut,
+  User,
   Calendar,
   HelpCircle,
-  Layout,
   Map,
-  User,
-  BookOpen,
-  ChevronDown,
-  ChevronRight,
-  UserCog,
+  Video,
+  Star,
   Menu,
   X,
+  Layout,
 } from "lucide-react"
 
-// Color de la marca
-const brandColor = "text-brand-400"
-const brandBgActive = "bg-brand-50"
-const brandBgHover = "hover:bg-brand-100"
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const pathname = usePathname()
 
-interface NavItemProps {
-  href: string
-  icon: React.ReactNode
-  text: string
-  isActive: boolean
-  hasSubmenu?: boolean
-  isSubmenuOpen?: boolean
-  onClick?: () => void
-}
+  useEffect(() => {
+    // Verificar si el usuario está autenticado
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/admin/verify")
+        const data = await res.json()
 
-function NavItem({ href, icon, text, isActive, hasSubmenu, isSubmenuOpen, onClick }: NavItemProps) {
-  return (
+        if (data.authenticated) {
+          setIsLoggedIn(true)
+          setCurrentUser(data.user)
+        } else {
+          setIsLoggedIn(false)
+          setCurrentUser(null)
+        }
+      } catch (error) {
+        console.error("Error verificando autenticación:", error)
+        setIsLoggedIn(false)
+        setCurrentUser(null)
+      }
+    }
+
+    // Solo verificar autenticación si estamos en una ruta de admin
+    if (pathname?.startsWith("/admin") && pathname !== "/admin/login") {
+      checkAuth()
+    } else if (pathname === "/admin/login") {
+      // En la página de login no necesitamos mostrar el sidebar
+      setIsLoggedIn(false)
+    }
+  }, [pathname])
+
+  // No mostrar el sidebar si no está autenticado y no está en la página de login
+  if (!isLoggedIn && pathname !== "/admin/login") {
+    return null
+  }
+
+  // No mostrar el sidebar en la página de login
+  if (pathname === "/admin/login") {
+    return null
+  }
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen)
+  }
+
+  const closeSidebar = () => {
+    setIsOpen(false)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" })
+      window.location.href = "/admin/login"
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error)
+    }
+  }
+
+  const MenuItem = ({
+    href,
+    icon,
+    text,
+    active,
+  }: { href: string; icon: React.ReactNode; text: string; active: boolean }) => (
     <Link
       href={href}
-      className={`flex items-center px-4 py-3 text-sm ${
-        isActive ? `${brandBgActive} ${brandColor} font-medium` : `text-gray-700 ${brandBgHover}`
-      } rounded-md transition-colors`}
-      onClick={onClick}
+      className={`flex items-center rounded-lg px-4 py-2 text-sm ${
+        active ? "bg-blue-100 text-blue-700" : "text-gray-700 hover:bg-gray-100"
+      }`}
+      onClick={closeSidebar}
     >
-      <span className={`mr-3 ${isActive ? brandColor : "text-gray-500"}`}>{icon}</span>
+      <span className="mr-3">{icon}</span>
       <span>{text}</span>
-      {hasSubmenu && (
-        <span className="ml-auto">
-          {isSubmenuOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </span>
-      )}
     </Link>
   )
-}
-
-export default function Sidebar() {
-  const pathname = usePathname()
-  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-    content: false,
-    catalog: false,
-    community: false,
-    settings: false,
-  })
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  const toggleMenu = (menu: string) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [menu]: !prev[menu],
-    }))
-  }
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  // Función para determinar si un menú debe estar abierto basado en la ruta actual
-  const isMenuActive = (paths: string[]) => {
-    return paths.some((path) => pathname.includes(path))
-  }
-
-  // Inicializar menús abiertos basados en la ruta actual
-  useState(() => {
-    const newOpenMenus = { ...openMenus }
-
-    if (isMenuActive(["/admin/products", "/admin/orders", "/admin/customers"])) {
-      newOpenMenus.catalog = true
-    }
-
-    if (isMenuActive(["/admin/banners", "/admin/home-blocks", "/admin/faq"])) {
-      newOpenMenus.content = true
-    }
-
-    if (isMenuActive(["/admin/skaters", "/admin/spots", "/admin/tutorials", "/admin/events"])) {
-      newOpenMenus.community = true
-    }
-
-    if (isMenuActive(["/admin/users"])) {
-      newOpenMenus.settings = true
-    }
-
-    setOpenMenus(newOpenMenus)
-  }, [pathname])
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="md:hidden fixed top-4 right-4 z-50">
-        <button
-          onClick={toggleMobileMenu}
-          className={`p-2 rounded-md bg-white shadow-md border border-gray-200 text-gray-700 ${brandBgHover}`}
-          aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
-        >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
+      {/* Botón de menú móvil */}
+      <button
+        className="fixed left-4 top-4 z-50 rounded-md bg-blue-600 p-2 text-white shadow-md md:hidden"
+        onClick={toggleSidebar}
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
-      {/* Sidebar overlay for mobile */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        ></div>
-      )}
+      {/* Overlay para cerrar el sidebar en móvil */}
+      {isOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden" onClick={closeSidebar}></div>}
 
       {/* Sidebar */}
-      <div
-        className={`w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto fixed left-0 top-0 pt-16 z-40 transition-transform duration-300 transform ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white p-4 shadow-lg transition-transform duration-300 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="px-4 py-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Dashboard</h2>
+        <div className="flex h-full flex-col">
+          <div className="mb-6 flex items-center justify-between">
+            <Link href="/admin" className="text-xl font-bold text-blue-600" onClick={closeSidebar}>
+              GranitoSkate
+            </Link>
+            <button className="rounded-md p-1 text-gray-500 hover:bg-gray-100 md:hidden" onClick={closeSidebar}>
+              <X size={20} />
+            </button>
+          </div>
 
-          <nav className="space-y-1">
-            <NavItem href="/admin" icon={<Home className="h-5 w-5" />} text="Inicio" isActive={pathname === "/admin"} />
-
-            {/* Catálogo */}
-            <div>
-              <NavItem
-                href="#"
-                icon={<Package className="h-5 w-5" />}
-                text="Catálogo"
-                isActive={
-                  pathname.includes("/admin/products") ||
-                  pathname.includes("/admin/orders") ||
-                  pathname.includes("/admin/customers")
-                }
-                hasSubmenu={true}
-                isSubmenuOpen={openMenus.catalog}
-                onClick={(e) => {
-                  e.preventDefault()
-                  toggleMenu("catalog")
-                }}
-              />
-              {openMenus.catalog && (
-                <div className="ml-6 mt-1 space-y-1">
-                  <NavItem
-                    href="/admin/products"
-                    icon={<Package className="h-4 w-4" />}
-                    text="Productos"
-                    isActive={pathname.includes("/admin/products")}
-                  />
-                  <NavItem
-                    href="/admin/orders"
-                    icon={<ShoppingCart className="h-4 w-4" />}
-                    text="Pedidos"
-                    isActive={pathname.includes("/admin/orders")}
-                  />
-                  <NavItem
-                    href="/admin/customers"
-                    icon={<Users className="h-4 w-4" />}
-                    text="Clientes"
-                    isActive={pathname.includes("/admin/customers")}
-                  />
-                </div>
-              )}
+          {currentUser && (
+            <div className="mb-6 flex items-center p-2 bg-gray-50 rounded-lg">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <User size={20} className="text-blue-600" />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium">{currentUser.nombre || currentUser.username}</p>
+                <p className="text-xs text-gray-500">{currentUser.rol}</p>
+              </div>
             </div>
+          )}
 
-            {/* Contenido */}
-            <div>
-              <NavItem
-                href="#"
-                icon={<Layout className="h-5 w-5" />}
-                text="Contenido"
-                isActive={
-                  pathname.includes("/admin/banners") ||
-                  pathname.includes("/admin/home-blocks") ||
-                  pathname.includes("/admin/faq")
-                }
-                hasSubmenu={true}
-                isSubmenuOpen={openMenus.content}
-                onClick={(e) => {
-                  e.preventDefault()
-                  toggleMenu("content")
-                }}
-              />
-              {openMenus.content && (
-                <div className="ml-6 mt-1 space-y-1">
-                  <NavItem
-                    href="/admin/banners"
-                    icon={<ImageIcon className="h-4 w-4" />}
-                    text="Banners"
-                    isActive={pathname.includes("/admin/banners")}
-                  />
-                  <NavItem
-                    href="/admin/home-blocks"
-                    icon={<Layout className="h-4 w-4" />}
-                    text="Bloques de Inicio"
-                    isActive={pathname.includes("/admin/home-blocks")}
-                  />
-                  <NavItem
-                    href="/admin/faq"
-                    icon={<HelpCircle className="h-4 w-4" />}
-                    text="FAQ"
-                    isActive={pathname.includes("/admin/faq")}
-                  />
-                </div>
-              )}
-            </div>
+          <nav className="flex-1 space-y-1 overflow-y-auto">
+            <MenuItem href="/admin" icon={<Home size={20} />} text="Dashboard" active={pathname === "/admin"} />
 
-            {/* Comunidad */}
-            <div>
-              <NavItem
-                href="#"
-                icon={<Users className="h-5 w-5" />}
-                text="Comunidad"
-                isActive={
-                  pathname.includes("/admin/skaters") ||
-                  pathname.includes("/admin/spots") ||
-                  pathname.includes("/admin/tutorials") ||
-                  pathname.includes("/admin/events")
-                }
-                hasSubmenu={true}
-                isSubmenuOpen={openMenus.community}
-                onClick={(e) => {
-                  e.preventDefault()
-                  toggleMenu("community")
-                }}
-              />
-              {openMenus.community && (
-                <div className="ml-6 mt-1 space-y-1">
-                  <NavItem
-                    href="/admin/skaters"
-                    icon={<User className="h-4 w-4" />}
-                    text="Skaters"
-                    isActive={pathname.includes("/admin/skaters")}
-                  />
-                  <NavItem
-                    href="/admin/spots"
-                    icon={<Map className="h-4 w-4" />}
-                    text="Spots"
-                    isActive={pathname.includes("/admin/spots")}
-                  />
-                  <NavItem
-                    href="/admin/tutorials"
-                    icon={<BookOpen className="h-4 w-4" />}
-                    text="Tutoriales"
-                    isActive={pathname.includes("/admin/tutorials")}
-                  />
-                  <NavItem
-                    href="/admin/events"
-                    icon={<Calendar className="h-4 w-4" />}
-                    text="Eventos"
-                    isActive={pathname.includes("/admin/events")}
-                  />
-                </div>
-              )}
-            </div>
-
-            <NavItem
-              href="/admin/reviews"
-              icon={<Star className="h-5 w-5" />}
-              text="Reseñas"
-              isActive={pathname.includes("/admin/reviews")}
+            <MenuItem
+              href="/admin/products"
+              icon={<ShoppingBag size={20} />}
+              text="Productos"
+              active={pathname?.startsWith("/admin/products")}
             />
 
-            <NavItem
+            <MenuItem
+              href="/admin/orders"
+              icon={<ShoppingBag size={20} />}
+              text="Pedidos"
+              active={pathname?.startsWith("/admin/orders")}
+            />
+
+            <MenuItem
+              href="/admin/customers"
+              icon={<Users size={20} />}
+              text="Clientes"
+              active={pathname?.startsWith("/admin/customers")}
+            />
+
+            <MenuItem
               href="/admin/messages"
-              icon={<MessageSquare className="h-5 w-5" />}
+              icon={<MessageSquare size={20} />}
               text="Mensajes"
-              isActive={pathname.includes("/admin/messages")}
+              active={pathname?.startsWith("/admin/messages")}
             />
 
-            {/* Configuración */}
-            <div>
-              <NavItem
-                href="#"
-                icon={<UserCog className="h-5 w-5" />}
-                text="Configuración"
-                isActive={pathname.includes("/admin/users")}
-                hasSubmenu={true}
-                isSubmenuOpen={openMenus.settings}
-                onClick={(e) => {
-                  e.preventDefault()
-                  toggleMenu("settings")
-                }}
-              />
-              {openMenus.settings && (
-                <div className="ml-6 mt-1 space-y-1">
-                  <NavItem
-                    href="/admin/users"
-                    icon={<UserCog className="h-4 w-4" />}
-                    text="Usuarios Admin"
-                    isActive={pathname.includes("/admin/users")}
-                  />
-                </div>
-              )}
-            </div>
+            <MenuItem
+              href="/admin/reviews"
+              icon={<Star size={20} />}
+              text="Reseñas"
+              active={pathname?.startsWith("/admin/reviews")}
+            />
 
-            <NavItem
-              href="/admin/shopify-integration"
-              icon={<FileText className="h-5 w-5" />}
-              text="Integración Shopify"
-              isActive={pathname.includes("/admin/shopify-integration")}
+            <MenuItem
+              href="/admin/faq"
+              icon={<HelpCircle size={20} />}
+              text="FAQ"
+              active={pathname?.startsWith("/admin/faq")}
+            />
+
+            <MenuItem
+              href="/admin/home-blocks"
+              icon={<Layout size={20} />}
+              text="Bloques de Inicio"
+              active={pathname?.startsWith("/admin/home-blocks")}
+            />
+
+            <MenuItem
+              href="/admin/spots"
+              icon={<Map size={20} />}
+              text="Spots"
+              active={pathname?.startsWith("/admin/spots")}
+            />
+
+            <MenuItem
+              href="/admin/tutorials"
+              icon={<Video size={20} />}
+              text="Tutoriales"
+              active={pathname?.startsWith("/admin/tutorials")}
+            />
+
+            <MenuItem
+              href="/admin/events"
+              icon={<Calendar size={20} />}
+              text="Eventos"
+              active={pathname?.startsWith("/admin/events")}
+            />
+
+            <MenuItem
+              href="/admin/skaters"
+              icon={<User size={20} />}
+              text="Skaters"
+              active={pathname?.startsWith("/admin/skaters")}
+            />
+
+            {/* Solo mostrar gestión de usuarios para administradores */}
+            {currentUser?.rol === "admin" && (
+              <MenuItem
+                href="/admin/usuarios"
+                icon={<Users size={20} />}
+                text="Gestión de Usuarios"
+                active={pathname?.startsWith("/admin/usuarios")}
+              />
+            )}
+
+            <MenuItem
+              href="/admin/settings"
+              icon={<Settings size={20} />}
+              text="Configuración"
+              active={pathname?.startsWith("/admin/settings")}
             />
           </nav>
+
+          <div className="border-t border-gray-200 pt-4">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center rounded-lg px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+            >
+              <LogOut size={20} className="mr-3" />
+              <span>Cerrar sesión</span>
+            </button>
+          </div>
         </div>
-      </div>
+      </aside>
+
+      {/* Contenido principal con margen para el sidebar */}
+      <div className="md:ml-64">{/* El contenido de la página se renderiza aquí */}</div>
     </>
   )
 }

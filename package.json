@@ -64,7 +64,11 @@
     "crypto": "latest",
     "@shopify/app-bridge": "latest",
     "@shopify/app-bridge-utils": "latest",
-    "postgres": "latest"
+    "bcryptjs": "latest",
+    "jsonwebtoken": "latest",
+    "@neondatabase/serverless": "latest",
+    "@vercel/postgres": "latest",
+    "kysely": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

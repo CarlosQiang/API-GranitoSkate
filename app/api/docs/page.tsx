@@ -8,7 +8,7 @@ export default function ApiDocs() {
           <h1 className="text-3xl font-bold text-gray-900">API GranitoSkate - Documentación</h1>
           <Link
             href="/"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#b38a3f] hover:bg-[#9e7a35] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b38a3f]"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -30,7 +30,6 @@ export default function ApiDocs() {
           </div>
           <div className="border-t border-gray-200">
             <dl>
-              {/* Autenticación */}
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Autenticación</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -38,7 +37,6 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Reseñas de productos */}
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Reseñas de productos</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -56,30 +54,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin Reseñas */}
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Reseñas</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/reviews</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todas las reseñas (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nueva reseña (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar reseña. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar reseña. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Lista de favoritos */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Lista de favoritos</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/wishlist</code> - GET, POST, DELETE
@@ -98,8 +73,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Mensajes */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Mensajes</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/messages</code> - GET, POST, PATCH
@@ -119,29 +93,6 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin Mensajes */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Mensajes</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/messages</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los mensajes (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo mensaje (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar mensaje. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar mensaje. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Estadísticas */}
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Estadísticas</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -158,7 +109,6 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Eventos */}
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Eventos</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -175,30 +125,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin Eventos */}
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Eventos</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/events</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los eventos (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo evento (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar evento. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar evento. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Encuestas */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Encuestas</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/feedback</code> - GET, POST
@@ -214,8 +141,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Webhook de Shopify */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Webhook de Shopify</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/shopify-webhook</code> - POST
@@ -228,8 +154,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Banners */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Banners</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/banners</code> - GET, POST, PUT, DELETE
@@ -251,29 +176,6 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin Banners */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Banners</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/banners</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los banners (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo banner (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar banner. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar banner. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Preguntas Frecuentes */}
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Preguntas Frecuentes</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -295,30 +197,7 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin FAQ */}
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: FAQ</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/faq</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todas las FAQs (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nueva FAQ (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar FAQ. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar FAQ. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Bloques de Inicio */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Bloques de Inicio</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                   <code>/api/home-blocks</code> - GET, POST, PUT, DELETE
@@ -340,29 +219,6 @@ export default function ApiDocs() {
                 </dd>
               </div>
 
-              {/* Admin Home Blocks */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Bloques de Inicio</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/home-blocks</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los bloques de inicio (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo bloque (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar bloque. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar bloque. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Builds de Skate */}
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Builds de Skate</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -385,265 +241,14 @@ export default function ApiDocs() {
                   </div>
                 </dd>
               </div>
-
-              {/* Admin Productos */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Productos</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/products</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los productos (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo producto (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar producto. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar producto. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Pedidos */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Pedidos</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/orders</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los pedidos (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo pedido (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar pedido. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar pedido. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Clientes */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Clientes</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/customers</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los clientes (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo cliente (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar cliente. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar cliente. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Usuarios */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Usuarios</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/users</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los usuarios (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo usuario (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar usuario. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar usuario. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Skaters */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Skaters</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/skaters</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los skaters (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo skater (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar skater. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar skater. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Spots */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Spots</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/spots</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los spots (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo spot (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar spot. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar spot. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Tutoriales */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin: Tutoriales</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/tutorials</code> - GET, POST, PUT, DELETE
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Obtener todos los tutoriales (admin).
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Crear nuevo tutorial (admin).
-                    </p>
-                    <p>
-                      <strong>PUT</strong>: Actualizar tutorial. Requiere: <code>id</code>
-                    </p>
-                    <p>
-                      <strong>DELETE</strong>: Eliminar tutorial. Parámetros: <code>id</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Inicialización de Base de Datos */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Inicialización de Base de Datos</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/init-db</code> - GET, POST
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Verificar estado de inicialización de la base de datos.
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Inicializar tablas en la base de datos.
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Inicialización de Tutoriales */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Inicialización de Tutoriales</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/init-db/tutorials</code> - GET, POST
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Verificar estado de inicialización de la tabla de tutoriales.
-                    </p>
-                    <p>
-                      <strong>POST</strong>: Inicializar tabla de tutoriales en la base de datos.
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Autenticación de Shopify */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Autenticación de Shopify</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/shopify/auth</code> - GET
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Iniciar flujo de autenticación con Shopify.
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Callback de Shopify */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Callback de Shopify</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/shopify/callback</code> - GET
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Recibir callback de autenticación de Shopify.
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Login */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin Login</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/login</code> - POST
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>POST</strong>: Iniciar sesión como administrador. Requiere: <code>password</code>
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Verificación */}
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin Verificación</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/verify</code> - GET
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>GET</strong>: Verificar sesión de administrador.
-                    </p>
-                  </div>
-                </dd>
-              </div>
-
-              {/* Admin Logout */}
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Admin Logout</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <code>/api/admin/logout</code> - POST
-                  <div className="mt-2 text-xs text-gray-500">
-                    <p>
-                      <strong>POST</strong>: Cerrar sesión de administrador.
-                    </p>
-                  </div>
-                </dd>
-              </div>
             </dl>
           </div>
         </div>
 
         <div className="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6 bg-[#b38a3f] text-white">
-            <h2 className="text-lg font-medium">Instrucciones de Integración</h2>
-            <p className="mt-1 max-w-2xl text-sm opacity-90">Cómo conectar esta API con tu tienda Shopify</p>
+          <div className="px-4 py-5 sm:px-6">
+            <h2 className="text-lg font-medium text-gray-900">Instrucciones de Integración</h2>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">Cómo conectar esta API con tu tienda Shopify</p>
           </div>
           <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
             <ol className="list-decimal pl-5 space-y-2">
@@ -651,7 +256,7 @@ export default function ApiDocs() {
                 <span className="font-medium">Instala la aplicación en Shopify</span>
                 <p className="text-sm text-gray-600 mt-1">
                   Visita la página de{" "}
-                  <Link href="/install" className="text-[#b38a3f] hover:text-[#9e7a35]">
+                  <Link href="/install" className="text-orange-500 hover:text-orange-600">
                     instalación
                   </Link>{" "}
                   y sigue las instrucciones para conectar tu tienda.

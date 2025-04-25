@@ -10,15 +10,15 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Tarjetas con altura fija */}
-          <Link href="/api/docs" className="block h-full">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-              <div className="bg-primary h-2"></div>
-              <div className="p-6 flex flex-col flex-grow">
+          {/* Tarjeta de Documentación API */}
+          <Link href="/api/docs" className="block">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-primary-500 h-2"></div>
+              <div className="p-6">
                 <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-primary"
+                    className="h-6 w-6 text-primary-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -32,10 +32,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">Documentación API</h2>
-                <p className="text-gray-600 mb-4 flex-grow">
+                <p className="text-gray-600 mb-4">
                   Explora todos los endpoints disponibles y aprende cómo integrar nuestra API con tu tienda Shopify.
                 </p>
-                <span className="text-primary font-medium flex items-center mt-auto">
+                <span className="text-primary-500 font-medium flex items-center">
                   Ver documentación
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -54,14 +54,15 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/admin/login" className="block h-full">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-              <div className="bg-primary h-2"></div>
-              <div className="p-6 flex flex-col flex-grow">
+          {/* Tarjeta de Panel de Administración */}
+          <Link href="/admin/login" className="block">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-primary-500 h-2"></div>
+              <div className="p-6">
                 <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-primary"
+                    className="h-6 w-6 text-primary-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -75,10 +76,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">Panel de Administración</h2>
-                <p className="text-gray-600 mb-4 flex-grow">
+                <p className="text-gray-600 mb-4">
                   Accede al panel de control para gestionar todos los aspectos de tu tienda GranitoSkate.
                 </p>
-                <span className="text-primary font-medium flex items-center mt-auto">
+                <span className="text-primary-500 font-medium flex items-center">
                   Iniciar sesión
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -97,14 +98,15 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/install" className="block h-full">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-              <div className="bg-primary h-2"></div>
-              <div className="p-6 flex flex-col flex-grow">
+          {/* Tarjeta de Instalación en Shopify */}
+          <Link href="/install" className="block">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-primary-500 h-2"></div>
+              <div className="p-6">
                 <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-primary"
+                    className="h-6 w-6 text-primary-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -118,10 +120,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-2">Instalar en Shopify</h2>
-                <p className="text-gray-600 mb-4 flex-grow">
+                <p className="text-gray-600 mb-4">
                   Integra GranitoSkate con tu tienda Shopify para aprovechar todas las funcionalidades.
                 </p>
-                <span className="text-primary font-medium flex items-center mt-auto">
+                <span className="text-primary-500 font-medium flex items-center">
                   Comenzar instalación
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
